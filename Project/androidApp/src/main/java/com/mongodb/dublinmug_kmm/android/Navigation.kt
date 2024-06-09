@@ -21,7 +21,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.mongodb.dublinmug_kmm.android.routes.WelcomeRoute
+import com.mongodb.dublinmug_kmm.android.views.DashboardScreen
+import com.mongodb.dublinmug_kmm.android.views.LoginScreen
 
 object Destinations {
     const val WELCOME_ROUTE = "welcome"
@@ -39,26 +40,16 @@ fun MainNavHost(
         startDestination = Destinations.WELCOME_ROUTE,
     ) {
         composable(Destinations.WELCOME_ROUTE) {
-            WelcomeRoute(
-                onNavigateToSignIn = {
-//                    navController.navigate(Destinations.SIGN_IN_ROUTE)
+            LoginScreen(
+                onSignIn = {
+                    navController.navigate(Destinations.SIGN_IN_ROUTE)
                 }
             )
         }
 
-//        composable(Destinations.SIGN_IN_ROUTE) {
-//            val startingEmail = it.arguments?.getString("email")
-//            SignInRoute(
-//                email = startingEmail,
-//                onSignInSubmitted = {
-//                    navController.navigate(SURVEY_ROUTE)
-//                },
-//                onSignInAsGuest = {
-//                    navController.navigate(SURVEY_ROUTE)
-//                },
-//                onNavUp = navController::navigateUp,
-//            )
-//        }
+        composable(Destinations.SIGN_IN_ROUTE) {
+            DashboardScreen()
+        }
 //
 //        composable(SURVEY_ROUTE) {
 //            SurveyRoute(

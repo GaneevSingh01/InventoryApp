@@ -1,7 +1,7 @@
 package com.mongodb.dublinmug_kmm.Utils
 
-enum class LoginResponse {
-    InvalidCredentials,
-    LoginSuccessful,
-    NoState,
+enum class LoginResponse(val displayMessage: String) {
+    InvalidCredentials("Invalid Credentials"),
+    LoginSuccessful ("Login Successful"),
+    NoState("Unknown")
 }

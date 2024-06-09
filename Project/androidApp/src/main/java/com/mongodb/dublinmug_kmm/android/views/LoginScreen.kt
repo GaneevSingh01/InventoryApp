@@ -18,7 +18,10 @@ package com.mongodb.dublinmug_kmm.android.views
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -34,48 +37,85 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mongodb.dublinmug_kmm.Utils.LoginResponse
 import com.mongodb.dublinmug_kmm.android.MainViewModel
+import com.mongodb.dublinmug_kmm.android.R
 
 @Composable
-fun WelcomeScreen(
+fun LoginScreen(
     onSignIn: () -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxWidth()
+            .fillMaxHeight()
     ) { innerPadding ->
 
         var userName by rememberSaveable { mutableStateOf("") }
         var password by rememberSaveable { mutableStateOf("") }
 
+        var loginButtonPressed by rememberSaveable { mutableStateOf(false) }
+
         var loginStatus by rememberSaveable { mutableStateOf(LoginResponse.NoState) }
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.padding(innerPadding)
         ) {
+            Image(
+                painter = painterResource(id = R.drawable.login_header),
+                contentDescription = ""
+            )
+
             Text(
-                text = "Login",
+                text = "Inventory Manager",
                 fontSize = 24.sp
             )
+
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceAround,
                 modifier = Modifier.fillMaxWidth()
+                    .padding(10.dp)
             ) {
-                Text(text = "Username: $userName")
-                TextField(value = userName, onValueChange = {userName = it})
-                Text(text = "Password: $password")
-                TextField(value = password, onValueChange = {password = it})
+                Text(
+                    text = "Username:",
+                    modifier = Modifier.padding(10.dp)
+                )
+                TextField(
+                    value = userName,
+                    onValueChange = {userName = it},
+                    modifier = Modifier.padding(10.dp)
+                )
+                Text(
+                    text = "Password:",
+                    modifier = Modifier.padding(10.dp)
+                )
+                TextField(
+                    value = password,
+                    onValueChange = {password = it},
+                    modifier = Modifier.padding(10.dp)
+                )
 
-                if(loginStatus != LoginResponse.NoState){
-                    Text(text = "Login Status: $loginStatus", color = Color.Red)
+                if(loginStatus != LoginResponse.LoginSuccessful && loginButtonPressed){
+                    Text(
+                        text = "Login Status: ${loginStatus.displayMessage}",
+                        color = Color.Red
+                    )
                 }
             }
-
             Button(
-                onClick = { loginStatus = login(userName, password) }
+                onClick = {
+                    loginButtonPressed = true
+                    loginStatus = login(userName, password)
+                    if (loginStatus == LoginResponse.LoginSuccessful) {
+                        onSignIn()
+                    }
+                }
             ) {
                 Text(text = "Log In")
             }
@@ -84,6 +124,8 @@ fun WelcomeScreen(
 }
 
 fun login(userName: String, password: String): LoginResponse {
+    if (userName.isEmpty() || password.isEmpty()) return LoginResponse.InvalidCredentials
+
     return MainViewModel().login(userName, password)
 }
 
@@ -92,7 +134,7 @@ fun login(userName: String, password: String): LoginResponse {
 @Composable
 fun WelcomeScreenPreview() {
     MaterialTheme {
-        WelcomeScreen(
+        LoginScreen(
             onSignIn = {}
         )
     }
