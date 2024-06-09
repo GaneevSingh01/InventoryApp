@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.mongodb.dublinmug_kmm.android"
-    compileSdk = 33
+    compileSdk = 34
     defaultConfig {
         applicationId = "com.mongodb.dublinmug_kmm.android"
         minSdk = 21
@@ -48,6 +48,8 @@ dependencies {
     // Integration with ViewModels
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
     implementation ("androidx.compose.runtime:runtime-livedata:1.4.3")
+    implementation("androidx.navigation:navigation-runtime-ktx:2.7.7")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
     // UI Tests
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.4.3")
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")

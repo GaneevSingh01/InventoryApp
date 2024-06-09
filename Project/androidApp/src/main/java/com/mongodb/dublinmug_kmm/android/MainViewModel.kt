@@ -7,6 +7,7 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.mongodb.dublinmug_kmm.QueryInfo
 import com.mongodb.dublinmug_kmm.RealmRepo
+import com.mongodb.dublinmug_kmm.Utils.LoginResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
@@ -16,6 +17,10 @@ class MainViewModel : ViewModel() {
     private val repo = RealmRepo()
     val queries: LiveData<List<QueryInfo>> = liveData {
         emitSource(repo.getAllData().flowOn(Dispatchers.IO).asLiveData(Dispatchers.Main))
+    }
+
+    fun login(email: String, password: String): LoginResponse{
+        return repo.login(email, password)
     }
 
     fun onSendClick(query: QueryInfo) {

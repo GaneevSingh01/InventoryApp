@@ -2,13 +2,17 @@ package com.mongodb.dublinmug_kmm
 
 import CommonFlow
 import asCommonFlow
+import com.mongodb.dublinmug_kmm.Utils.LoginResponse
 import io.realm.kotlin.Realm
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
+import io.realm.kotlin.internal.interop.sync.Response
 import io.realm.kotlin.log.LogLevel
 import io.realm.kotlin.mongodb.App
 import io.realm.kotlin.mongodb.AppConfiguration
 import io.realm.kotlin.mongodb.Credentials
+import io.realm.kotlin.mongodb.User
+import io.realm.kotlin.mongodb.exceptions.InvalidCredentialsException
 import io.realm.kotlin.mongodb.sync.SyncConfiguration
 import io.realm.kotlin.query.Sort
 import kotlinx.coroutines.flow.map
@@ -17,20 +21,28 @@ import kotlinx.coroutines.runBlocking
 class RealmRepo {
 
     lateinit var realm: Realm
+    lateinit var user: User
 
     private val appServiceInstance by lazy {
         // If logs are on app level then it set for everything ..
         val configuration =
-            AppConfiguration.Builder("application-0-elgah").log(LogLevel.ALL).build()
+            AppConfiguration.Builder("application-0-rqfuqzq").log(LogLevel.ALL).build()
         App.create(configuration)
     }
 
-    init {
-        setupRealmSync()
+    fun login(email: String, password: String): LoginResponse {
+        val credentials = Credentials.emailPassword(email, password)
+
+        try{
+            user = runBlocking { appServiceInstance.login(credentials) }
+            setupRealmSync()
+            return LoginResponse.LoginSuccessful
+        } catch (invalidCredentialsException : InvalidCredentialsException) {
+            return LoginResponse.InvalidCredentials
+        }
     }
 
     private fun setupRealmSync() {
-        val user = runBlocking { appServiceInstance.login(Credentials.anonymous()) }
         val config = SyncConfiguration
             .Builder(user, setOf(QueryInfo::class))
             .initialSubscriptions { realm ->
