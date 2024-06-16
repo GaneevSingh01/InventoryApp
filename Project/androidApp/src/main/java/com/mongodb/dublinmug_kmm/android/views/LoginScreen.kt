@@ -112,9 +112,9 @@ fun LoginScreen(
                 onClick = {
                     loginButtonPressed = true
                     loginStatus = login(userName, password)
-                    if (loginStatus == LoginResponse.LoginSuccessful) {
+//                    if (loginStatus == LoginResponse.LoginSuccessful) {
                         onSignIn()
-                    }
+//                    }
                 }
             ) {
                 Text(text = "Log In")

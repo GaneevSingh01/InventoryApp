@@ -16,19 +16,27 @@
 
 package com.mongodb.dublinmug_kmm.android
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.mongodb.dublinmug_kmm.android.views.BaseContentPresenter
 import com.mongodb.dublinmug_kmm.android.views.DashboardScreen
 import com.mongodb.dublinmug_kmm.android.views.LoginScreen
 
 object Destinations {
-    const val WELCOME_ROUTE = "welcome"
-    const val SIGN_IN_ROUTE = "signin/{email}"
-    const val SURVEY_ROUTE = "survey"
-    const val SURVEY_RESULTS_ROUTE = "surveyresults"
+    const val LOGIN_ROUTE = "login"
+    const val DASHBOARD_ROUTE = "dashboard"
+    const val LED_ROUTE = "led"
+    const val CASETIFY_ROUTE = "casetify"
+}
+
+enum class DrawerActions{
+    HOME,
+    CASE,
+    LED
 }
 
 @Composable
@@ -37,33 +45,42 @@ fun MainNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Destinations.WELCOME_ROUTE,
+        startDestination = Destinations.LOGIN_ROUTE,
     ) {
-        composable(Destinations.WELCOME_ROUTE) {
+        composable(Destinations.LOGIN_ROUTE) {
             LoginScreen(
                 onSignIn = {
-                    navController.navigate(Destinations.SIGN_IN_ROUTE)
+                    navController.navigate(Destinations.DASHBOARD_ROUTE)
                 }
             )
         }
 
-        composable(Destinations.SIGN_IN_ROUTE) {
-            DashboardScreen()
+        composable(Destinations.DASHBOARD_ROUTE) {
+            DashboardScreen(
+                onNavigate = {drawerAction ->
+                    navController.navigate(getNavigationFromDrawer(drawerAction))
+                }
+            )
         }
-//
-//        composable(SURVEY_ROUTE) {
-//            SurveyRoute(
-//                onSurveyComplete = {
-//                    navController.navigate(SURVEY_RESULTS_ROUTE)
-//                },
-//                onNavUp = navController::navigateUp,
-//            )
-//        }
-//
-//        composable(SURVEY_RESULTS_ROUTE) {
-//            SurveyResultScreen {
-//                navController.popBackStack(WELCOME_ROUTE, false)
-//            }
-//        }
+
+        composable(Destinations.LED_ROUTE) {
+            BaseContentPresenter(
+                content = { Text(text = "LED") },
+                onDrawerButtonPress = { drawerAction -> navController.navigate(getNavigationFromDrawer(drawerAction))}
+            )
+        }
+
+        composable(Destinations.CASETIFY_ROUTE) {
+            BaseContentPresenter(
+                content = { Text(text = "CASE") },
+                onDrawerButtonPress = { drawerAction -> navController.navigate(getNavigationFromDrawer(drawerAction))}
+            )
+        }
     }
+}
+
+fun getNavigationFromDrawer(drawerActions: DrawerActions) : String = when (drawerActions) {
+    DrawerActions.HOME -> Destinations.DASHBOARD_ROUTE
+    DrawerActions.LED -> Destinations.LED_ROUTE
+    DrawerActions.CASE -> Destinations.CASETIFY_ROUTE
 }
