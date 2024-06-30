@@ -19,13 +19,13 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import com.mongodb.dublinmug_kmm.android.DrawerActions
+import com.mongodb.dublinmug_kmm.android.navigators.DrawerMenuOptions
 import kotlinx.coroutines.launch
 
 @Composable
 fun BaseContentPresenter(
     content: @Composable () -> Unit,
-    onDrawerButtonPress: (drawerAction: DrawerActions) -> Unit
+    onDrawerButtonPress: (drawerAction: DrawerMenuOptions) -> Unit
 ) {
     var drawerState = rememberDrawerState(DrawerValue.Closed)
 

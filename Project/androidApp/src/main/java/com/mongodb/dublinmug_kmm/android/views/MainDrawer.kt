@@ -21,13 +21,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mongodb.dublinmug_kmm.android.DrawerActions
+import com.mongodb.dublinmug_kmm.android.navigators.DrawerMenuOptions
 
 @Composable
 fun MainDrawer(
-    onDestinationSelect: (DrawerActions) -> Unit
+    onDestinationSelect: (DrawerMenuOptions) -> Unit
 ) {
-    val drawerActions = listOf(DrawerActions.HOME, DrawerActions.CASE, DrawerActions.LED)
+    val drawerActions = listOf(DrawerMenuOptions.HOME, DrawerMenuOptions.CASE, DrawerMenuOptions.LED)
     Surface (
         modifier = Modifier
             .fillMaxWidth()

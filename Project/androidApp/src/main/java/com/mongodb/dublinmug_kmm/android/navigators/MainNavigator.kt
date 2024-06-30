@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.mongodb.dublinmug_kmm.android
+package com.mongodb.dublinmug_kmm.android.navigators
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import com.mongodb.dublinmug_kmm.android.views.BaseContentPresenter
 import com.mongodb.dublinmug_kmm.android.views.DashboardScreen
 import com.mongodb.dublinmug_kmm.android.views.LoginScreen
+import com.mongodb.dublinmug_kmm.models.MainViewModel
 
 object Destinations {
     const val LOGIN_ROUTE = "login"
@@ -33,16 +34,18 @@ object Destinations {
     const val CASETIFY_ROUTE = "casetify"
 }
 
-enum class DrawerActions{
+enum class DrawerMenuOptions{
     HOME,
     CASE,
     LED
 }
 
 @Composable
-fun MainNavHost(
+fun MainNavigator(
     navController: NavHostController = rememberNavController(),
 ) {
+    val mainViewModel = MainViewModel()
+
     NavHost(
         navController = navController,
         startDestination = Destinations.LOGIN_ROUTE,
@@ -51,36 +54,41 @@ fun MainNavHost(
             LoginScreen(
                 onSignIn = {
                     navController.navigate(Destinations.DASHBOARD_ROUTE)
-                }
+                },
+                mainViewModel = mainViewModel
             )
         }
 
         composable(Destinations.DASHBOARD_ROUTE) {
             DashboardScreen(
-                onNavigate = {drawerAction ->
-                    navController.navigate(getNavigationFromDrawer(drawerAction))
+                onNavigate = { drawerAction ->
+                    navController.navigate(getNavigationFromMenu(drawerAction))
                 }
             )
         }
 
         composable(Destinations.LED_ROUTE) {
-            BaseContentPresenter(
-                content = { Text(text = "LED") },
-                onDrawerButtonPress = { drawerAction -> navController.navigate(getNavigationFromDrawer(drawerAction))}
+            LEDScreenNavigator(
+                onNavigate = { drawerAction ->
+                    navController.navigate(getNavigationFromMenu(drawerAction))
+                },
+                mainViewModel = mainViewModel
             )
         }
 
         composable(Destinations.CASETIFY_ROUTE) {
             BaseContentPresenter(
                 content = { Text(text = "CASE") },
-                onDrawerButtonPress = { drawerAction -> navController.navigate(getNavigationFromDrawer(drawerAction))}
+                onDrawerButtonPress = { drawerAction ->
+                    navController.navigate(getNavigationFromMenu(drawerAction))
+                }
             )
         }
     }
 }
 
-fun getNavigationFromDrawer(drawerActions: DrawerActions) : String = when (drawerActions) {
-    DrawerActions.HOME -> Destinations.DASHBOARD_ROUTE
-    DrawerActions.LED -> Destinations.LED_ROUTE
-    DrawerActions.CASE -> Destinations.CASETIFY_ROUTE
+fun getNavigationFromMenu(drawerActions: DrawerMenuOptions) : String = when (drawerActions) {
+    DrawerMenuOptions.HOME -> Destinations.DASHBOARD_ROUTE
+    DrawerMenuOptions.LED -> Destinations.LED_ROUTE
+    DrawerMenuOptions.CASE -> Destinations.CASETIFY_ROUTE
 }

@@ -42,15 +42,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mongodb.dublinmug_kmm.Utils.LoginResponse
-import com.mongodb.dublinmug_kmm.android.MainViewModel
 import com.mongodb.dublinmug_kmm.android.R
+import com.mongodb.dublinmug_kmm.models.MainViewModel
+
+class LoginScreenViewModel(val mainViewModel: MainViewModel) {
+    fun login(userName: String, password: String): LoginResponse {
+        if (userName.isEmpty() || password.isEmpty()) return LoginResponse.InvalidCredentials
+        return mainViewModel.login(userName, password)
+    }
+}
 
 @Composable
 fun LoginScreen(
     onSignIn: () -> Unit,
+    mainViewModel: MainViewModel
 ) {
+    val loginScreenVM = LoginScreenViewModel(mainViewModel)
+
     Scaffold(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .fillMaxHeight()
     ) { innerPadding ->
 
@@ -79,7 +90,8 @@ fun LoginScreen(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceAround,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(10.dp)
             ) {
                 Text(
@@ -111,10 +123,10 @@ fun LoginScreen(
             Button(
                 onClick = {
                     loginButtonPressed = true
-                    loginStatus = login(userName, password)
-//                    if (loginStatus == LoginResponse.LoginSuccessful) {
+                    loginStatus = loginScreenVM.login(userName, password)
+                    if (loginStatus == LoginResponse.LoginSuccessful) {
                         onSignIn()
-//                    }
+                    }
                 }
             ) {
                 Text(text = "Log In")
@@ -123,19 +135,11 @@ fun LoginScreen(
     }
 }
 
-fun login(userName: String, password: String): LoginResponse {
-    if (userName.isEmpty() || password.isEmpty()) return LoginResponse.InvalidCredentials
-
-    return MainViewModel().login(userName, password)
-}
-
 @Preview(name = "Welcome light theme", uiMode = UI_MODE_NIGHT_YES)
 @Preview(name = "Welcome dark theme", uiMode = UI_MODE_NIGHT_NO)
 @Composable
 fun WelcomeScreenPreview() {
     MaterialTheme {
-        LoginScreen(
-            onSignIn = {}
-        )
+        LoginScreen({ }, MainViewModel())
     }
 }
