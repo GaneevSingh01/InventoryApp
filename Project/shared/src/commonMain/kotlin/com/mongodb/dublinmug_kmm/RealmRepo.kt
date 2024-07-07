@@ -52,42 +52,24 @@ class RealmRepo {
         realm = Realm.open(config)
     }
 
-    suspend fun saveObject(objectToSave: ProductDataModel) {
-        realm.write {
+    fun saveObject(objectToSave: ProductDataModel) {
+        realm.writeBlocking {
             copyToRealm(objectToSave)
         }
     }
 
-//    suspend fun editInfo(queryInfo: QueryInfo) {
-//        realm.write {
-//            copyToRealm(queryInfo, updatePolicy = UpdatePolicy.ALL)
-//        }
-//    }
-//
-    fun getAllItemData(): CommonFlow<List<ProductDataModel>> {
-        return realm.query<ProductDataModel>()
+    fun deleteObject(objectToDelete: ProductDataModel) {
+        realm.writeBlocking {
+            val query = query<ProductDataModel>(query = "_id == $0", objectToDelete._id).find().first()
+            query.isDeleted = true
+        }
+    }
+
+    fun getAllActiveProducts(): CommonFlow<List<ProductDataModel>> {
+        return realm.query<ProductDataModel>(query = "isDeleted == $0", false)
             .asFlow()
             .map {
                 it.list
             }.asCommonFlow()
     }
-//
-//    suspend fun dummyData() {
-//        for (i in 1..100) {
-//            val info = QueryInfo().apply {
-//                _id = RandomUUID().randomId
-//                queries = "random"
-//            }
-//            realm.write {
-//                copyToRealm(info)
-//            }
-//        }
-//    }
-//
-//    suspend fun removeDummyData() {
-//        realm.write {
-//            val items = query<QueryInfo>("queries = $0", "random").find()
-//            delete(items)
-//        }
-//    }
 }

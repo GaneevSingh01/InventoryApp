@@ -19,11 +19,13 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import com.mongodb.dublinmug_kmm.android.navigators.DrawerMenuOptions
 import kotlinx.coroutines.launch
 
 @Composable
 fun BaseContentPresenter(
+    pageName: String = "Inventory Manager",
     content: @Composable () -> Unit,
     onDrawerButtonPress: (drawerAction: DrawerMenuOptions) -> Unit
 ) {
@@ -37,7 +39,7 @@ fun BaseContentPresenter(
                 }
             )
         },
-        content = { BaseContentHolder(content, drawerState) },
+        content = { BaseContentHolder(pageName, content, drawerState) },
         drawerState = drawerState
     )
 }
@@ -45,6 +47,7 @@ fun BaseContentPresenter(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BaseContentHolder(
+    pageName: String,
     content: @Composable () -> Unit,
     drawerState: DrawerState
 ){
@@ -58,14 +61,14 @@ fun BaseContentHolder(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary
                 ),
-                title = { Text(text = "Inventory Manager") },
+                title = { Text(text = pageName) },
                 navigationIcon = {
                     IconButton(
                         onClick = { toggleDrawer() }
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Menu,
-                            contentDescription = "Localized description"
+                            contentDescription = "Menu"
                         )
                     }
                 }
@@ -78,5 +81,13 @@ fun BaseContentHolder(
         ) {
             content()
         }
+    }
+}
+
+@Preview("BaseContentPresenter")
+@Composable
+fun BaseContentPresenterPreview(){
+    MaterialTheme{
+        BaseContentPresenter(content = { }) { }
     }
 }

@@ -69,7 +69,7 @@ fun MainNavigator(
 
         composable(Destinations.LED_ROUTE) {
             LEDScreenNavigator(
-                onNavigate = { drawerAction ->
+                onDrawerNavigate = { drawerAction ->
                     navController.navigate(getNavigationFromMenu(drawerAction))
                 },
                 mainViewModel = mainViewModel

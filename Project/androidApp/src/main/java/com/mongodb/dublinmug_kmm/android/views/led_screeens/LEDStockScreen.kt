@@ -5,29 +5,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mongodb.dublinmug_kmm.android.navigators.DrawerMenuOptions
-import com.mongodb.dublinmug_kmm.android.navigators.LEDMenuOptions
 import com.mongodb.dublinmug_kmm.android.views.BaseContentPresenter
 
 @Composable
 fun LEDStockScreen(
     onNavigate: (DrawerMenuOptions) -> Unit,
-    onMenuOptionClick: (LEDMenuOptions) -> Unit
 ) {
     BaseContentPresenter(
-        content = { StockScreenContent(onMenuOptionClick) },
+        content = { StockScreenContent() },
         onDrawerButtonPress = { drawerAction ->
             onNavigate(drawerAction)
         }
@@ -35,9 +28,7 @@ fun LEDStockScreen(
 }
 
 @Composable
-fun StockScreenContent(
-    onMenuOptionClick: (LEDMenuOptions) -> Unit
-) {
+fun StockScreenContent() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -45,22 +36,7 @@ fun StockScreenContent(
             .fillMaxHeight()
             .padding(5.dp)
     ) {
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = 150.dp),
-        ) {
-            itemsIndexed(LEDMenuOptions.values()) { index, item ->
-                Button(
-                    onClick = { onMenuOptionClick(item) },
-                    shape = RectangleShape,
-                    modifier = Modifier.padding(5.dp)
-                ) {
-                    Text(
-                        text = item.name,
-                        modifier = Modifier.padding(vertical = 20.dp)
-                    )
-                }
-            }
-        }
+        Text("LED Stock")
     }
 }
 
@@ -70,6 +46,6 @@ fun StockScreenContent(
 @Composable
 fun LEDStockScreenPreview() {
     MaterialTheme {
-        LEDStockScreen(onNavigate = {}, onMenuOptionClick = {})
+        LEDStockScreen(onNavigate = {})
     }
 }

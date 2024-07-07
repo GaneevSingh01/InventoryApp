@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mongodb.dublinmug_kmm.android.models.ProductModel
+import com.mongodb.dublinmug_kmm.android.views.led_screeens.AddProductScreen
 import com.mongodb.dublinmug_kmm.android.views.led_screeens.LEDHomeScreen
 import com.mongodb.dublinmug_kmm.android.views.led_screeens.LEDOrderScreen
 import com.mongodb.dublinmug_kmm.android.views.led_screeens.LEDProductScreen
@@ -14,9 +15,11 @@ import com.mongodb.dublinmug_kmm.models.MainViewModel
 
 object LEDScreenDestinations {
     const val HOME_ROUTE = "home"
-    const val STOCK_ROUTE = "Stock"
-    const val ORDERS_ROUTE = "Orders"
-    const val PRODUCTS_ROUTE = "Products"
+    const val STOCK_ROUTE = "stock"
+    const val ORDERS_ROUTE = "orders"
+    const val PRODUCTS_ROUTE = "products"
+    const val ADD_PRODUCT_ROUTE = "products/add"
+    const val VIEW_PRODUCT_ROUTE = "products/view/{product}"
 }
 
 enum class LEDMenuOptions{
@@ -24,12 +27,19 @@ enum class LEDMenuOptions{
     ORDERS,
     PRODUCTS,
 }
+
+enum class LEDSubPages {
+    PRODUCTS_ADD,
+    PRODUCTS_VIEW,
+}
+
 @Composable
 fun LEDScreenNavigator(
-    onNavigate: (DrawerMenuOptions) -> Unit,
+    onDrawerNavigate: (DrawerMenuOptions) -> Unit,
     navController: NavHostController = rememberNavController(),
     mainViewModel: MainViewModel
 ){
+    val productModel = ProductModel(mainViewModel)
     NavHost(
         navController = navController,
         startDestination = LEDScreenDestinations.HOME_ROUTE,
@@ -39,35 +49,41 @@ fun LEDScreenNavigator(
                 onMenuOptionClick = { menuOption ->
                     navController.navigate(getNavigationFromMenu(menuOption))
                 },
-                onNavigate = onNavigate
+                onNavigate = onDrawerNavigate
             )
         }
 
         composable(LEDScreenDestinations.ORDERS_ROUTE) {
             LEDOrderScreen(
-                onMenuOptionClick = { menuOption ->
-                    navController.navigate(getNavigationFromMenu(menuOption))
-                },
-                onNavigate = onNavigate,
+                onNavigate = onDrawerNavigate,
             )
         }
 
         composable(LEDScreenDestinations.STOCK_ROUTE) {
             LEDStockScreen(
-                onMenuOptionClick = { menuOption ->
-                    navController.navigate(getNavigationFromMenu(menuOption))
-                },
-                onNavigate = onNavigate
+                onNavigate = onDrawerNavigate
             )
         }
 
         composable(LEDScreenDestinations.PRODUCTS_ROUTE) {
             LEDProductScreen(
-                onMenuOptionClick = { menuOption ->
-                    navController.navigate(getNavigationFromMenu(menuOption))
+                onBackPressed = {
+                    navController.popBackStack()
                 },
-                onNavigate = onNavigate,
-                productModel = ProductModel(mainViewModel)
+                onAddButtonClicked = {
+                    navController.navigate(getNavigationToSubPage(LEDSubPages.PRODUCTS_ADD))
+                },
+                onProductClicked = {product ->
+                    navController.navigate(getNavigationToSubPage(LEDSubPages.PRODUCTS_ADD, product))
+                },
+                productModel = productModel
+            )
+        }
+
+        composable(LEDScreenDestinations.ADD_PRODUCT_ROUTE) {
+            AddProductScreen(
+                onBackButtonClicked = { navController.popBackStack() },
+                productModel = productModel
             )
         }
     }
@@ -77,4 +93,9 @@ fun getNavigationFromMenu(menuOption: LEDMenuOptions) : String = when (menuOptio
     LEDMenuOptions.STOCK -> LEDScreenDestinations.STOCK_ROUTE
     LEDMenuOptions.ORDERS -> LEDScreenDestinations.ORDERS_ROUTE
     LEDMenuOptions.PRODUCTS -> LEDScreenDestinations.PRODUCTS_ROUTE
+}
+
+fun getNavigationToSubPage(subPages: LEDSubPages, argument: String = "") : String = when (subPages) {
+    LEDSubPages.PRODUCTS_ADD -> LEDScreenDestinations.ADD_PRODUCT_ROUTE
+    LEDSubPages.PRODUCTS_VIEW -> LEDScreenDestinations.VIEW_PRODUCT_ROUTE.plus(argument)
 }

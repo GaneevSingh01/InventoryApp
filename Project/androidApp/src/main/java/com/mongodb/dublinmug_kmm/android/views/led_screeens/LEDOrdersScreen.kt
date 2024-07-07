@@ -13,16 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mongodb.dublinmug_kmm.android.navigators.DrawerMenuOptions
-import com.mongodb.dublinmug_kmm.android.navigators.LEDMenuOptions
 import com.mongodb.dublinmug_kmm.android.views.BaseContentPresenter
 
 @Composable
 fun LEDOrderScreen(
     onNavigate: (DrawerMenuOptions) -> Unit,
-    onMenuOptionClick: (LEDMenuOptions) -> Unit,
 ) {
     BaseContentPresenter(
-        content = { OrderScreenContent(onMenuOptionClick) },
+        content = { OrderScreenContent() },
         onDrawerButtonPress = { drawerAction ->
             onNavigate(drawerAction)
         }
@@ -30,9 +28,7 @@ fun LEDOrderScreen(
 }
 
 @Composable
-fun OrderScreenContent(
-    onMenuOptionClick: (LEDMenuOptions) -> Unit,
-) {
+fun OrderScreenContent() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -112,7 +108,6 @@ fun LEDOrderScreenPreview() {
     MaterialTheme {
         LEDOrderScreen(
             onNavigate = {},
-            onMenuOptionClick = {}
         )
     }
 }

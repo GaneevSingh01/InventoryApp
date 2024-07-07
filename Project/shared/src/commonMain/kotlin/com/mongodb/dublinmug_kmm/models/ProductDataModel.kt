@@ -8,4 +8,5 @@ class ProductDataModel : RealmObject {
     var _id: String = ""
     var name: String = ""
     var attribute: String = ""
+    var isDeleted: Boolean = false
 }
