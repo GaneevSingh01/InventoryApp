@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -21,7 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 enum class SubPageButtons{
     BACK,
     ADD,
-    SEARCH
+    SEARCH,
+    DELETE
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,7 +34,8 @@ fun SubPageContentPresenter(
     activeButtons: List<SubPageButtons> = emptyList(),
     onBackButtonPress: () -> Unit,
     onAddButtonClicked: () -> Unit = {},
-    onSearchButtonPress: () -> Unit = {}
+    onSearchButtonPress: () -> Unit = {},
+    onDeleteButtonClicked: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -74,6 +77,16 @@ fun SubPageContentPresenter(
                                     Icon(
                                         imageVector = Icons.Filled.Add,
                                         contentDescription = "Add"
+                                    )
+                                }
+                            }
+                            SubPageButtons.DELETE -> {
+                                IconButton(
+                                    onClick = { onDeleteButtonClicked() }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Delete,
+                                        contentDescription = "Delete"
                                     )
                                 }
                             }

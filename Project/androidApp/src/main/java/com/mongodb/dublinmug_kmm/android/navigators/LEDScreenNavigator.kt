@@ -11,6 +11,7 @@ import com.mongodb.dublinmug_kmm.android.views.led_screeens.LEDHomeScreen
 import com.mongodb.dublinmug_kmm.android.views.led_screeens.LEDOrderScreen
 import com.mongodb.dublinmug_kmm.android.views.led_screeens.LEDProductScreen
 import com.mongodb.dublinmug_kmm.android.views.led_screeens.LEDStockScreen
+import com.mongodb.dublinmug_kmm.android.views.led_screeens.ViewProductScreen
 import com.mongodb.dublinmug_kmm.models.MainViewModel
 
 object LEDScreenDestinations {
@@ -74,7 +75,7 @@ fun LEDScreenNavigator(
                     navController.navigate(getNavigationToSubPage(LEDSubPages.PRODUCTS_ADD))
                 },
                 onProductClicked = {product ->
-                    navController.navigate(getNavigationToSubPage(LEDSubPages.PRODUCTS_ADD, product))
+                    navController.navigate(getNavigationToSubPage(LEDSubPages.PRODUCTS_VIEW, product))
                 },
                 productModel = productModel
             )
@@ -82,6 +83,14 @@ fun LEDScreenNavigator(
 
         composable(LEDScreenDestinations.ADD_PRODUCT_ROUTE) {
             AddProductScreen(
+                onBackButtonClicked = { navController.popBackStack() },
+                productModel = productModel
+            )
+        }
+
+        composable(LEDScreenDestinations.VIEW_PRODUCT_ROUTE) {
+            ViewProductScreen(
+                productId = it.arguments?.getString("product") ?: "**Empty**",
                 onBackButtonClicked = { navController.popBackStack() },
                 productModel = productModel
             )
@@ -97,5 +106,5 @@ fun getNavigationFromMenu(menuOption: LEDMenuOptions) : String = when (menuOptio
 
 fun getNavigationToSubPage(subPages: LEDSubPages, argument: String = "") : String = when (subPages) {
     LEDSubPages.PRODUCTS_ADD -> LEDScreenDestinations.ADD_PRODUCT_ROUTE
-    LEDSubPages.PRODUCTS_VIEW -> LEDScreenDestinations.VIEW_PRODUCT_ROUTE.plus(argument)
+    LEDSubPages.PRODUCTS_VIEW -> LEDScreenDestinations.VIEW_PRODUCT_ROUTE.removeSuffix("{product}").plus(argument)
 }

@@ -65,6 +65,16 @@ class RealmRepo {
         }
     }
 
+    fun getObject(objectId: String): ProductDataModel? {
+        if (!this::realm.isInitialized) return null
+        val results = realm.query<ProductDataModel>(query = "_id == $0", objectId).find()
+        return if (results.isNotEmpty()) {
+            results.first()
+        } else {
+            null
+        }
+    }
+
     fun getAllActiveProducts(): CommonFlow<List<ProductDataModel>> {
         return realm.query<ProductDataModel>(query = "isDeleted == $0", false)
             .asFlow()

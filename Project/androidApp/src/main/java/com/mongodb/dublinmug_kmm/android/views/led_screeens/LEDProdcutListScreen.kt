@@ -12,12 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -26,10 +22,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.mongodb.dublinmug_kmm.android.models.ProductModel
 import com.mongodb.dublinmug_kmm.android.views.SubPageButtons
 import com.mongodb.dublinmug_kmm.android.views.SubPageContentPresenter
@@ -73,7 +67,6 @@ fun OrderProductContent(
 
         ProductsList(
             productList = productList,
-            onDelete = { product -> productModel.deleteProduct(product) },
             onProductClicked = onProductClicked
         )
     }
@@ -83,17 +76,9 @@ fun OrderProductContent(
 @Composable
 fun ProductsList(
     productList: List<ProductDataModel>,
-    onDelete: (ProductDataModel) -> Unit,
     onProductClicked: (productId: String) -> Unit
 ) {
     val modifier = Modifier.padding(10.dp)
-    Text(
-        text = "Existing Products",
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Bold,
-        modifier = modifier
-
-    )
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(8.dp),
@@ -118,7 +103,6 @@ fun ProductsList(
                     Product(
                         product = product,
                         modifier,
-                        onDelete = onDelete,
                         onProductClicked = onProductClicked
                     )
                 }
@@ -132,7 +116,6 @@ fun Product(
     product: ProductDataModel,
     modifier: Modifier,
     onProductClicked: (productId: String) -> Unit,
-    onDelete: (ProductDataModel) -> Unit
 ){
     Button(
         onClick = { onProductClicked(product._id) },
@@ -147,7 +130,7 @@ fun Product(
             modifier = modifier.fillMaxWidth()
         ) {
             Row(
-                modifier = modifier,
+                modifier = modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -158,14 +141,6 @@ fun Product(
                 Text(
                     text = product.attribute,
                     modifier = modifier
-                )
-            }
-            IconButton(
-                onClick = { onDelete(product) },
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Delete,
-                    contentDescription = "Delete"
                 )
             }
         }
@@ -183,7 +158,7 @@ fun ProductPreview(){
 
     MaterialTheme{
         Surface {
-            Product(product = product, modifier = Modifier, {}, {})
+            Product(product = product, modifier = Modifier, {})
         }
     }
 }

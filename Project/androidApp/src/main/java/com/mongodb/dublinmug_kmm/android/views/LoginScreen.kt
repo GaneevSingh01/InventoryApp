@@ -123,6 +123,12 @@ fun LoginScreen(
             Button(
                 onClick = {
                     loginButtonPressed = true
+                    // TODO: REMOVE
+                    if(userName == "" || password == "") {
+                        userName = "ganeevsingh1@outlook.com"
+                        password = "itguy2022"
+                    }
+                    
                     loginStatus = loginScreenVM.login(userName, password)
                     if (loginStatus == LoginResponse.LoginSuccessful) {
                         onSignIn()

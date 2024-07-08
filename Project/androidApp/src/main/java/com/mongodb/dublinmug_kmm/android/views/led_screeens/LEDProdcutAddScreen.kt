@@ -1,7 +1,6 @@
 package com.mongodb.dublinmug_kmm.android.views.led_screeens
 
 import android.content.res.Configuration
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -45,7 +44,6 @@ fun AddProduct(
     addProduct: (name: String, details: String) -> Unit
 ){
     Surface(
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
         modifier = Modifier.fillMaxWidth()
     ) {
         val modifier = Modifier

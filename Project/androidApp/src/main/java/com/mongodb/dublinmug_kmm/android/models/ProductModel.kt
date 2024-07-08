@@ -21,6 +21,10 @@ class ProductModel(
         }
     }
 
+    fun getProduct(id: String): ProductDataModel? {
+        return repo.getObject(id)
+    }
+
     fun deleteProduct(product: ProductDataModel) {
         repo.deleteObject(product)
     }
