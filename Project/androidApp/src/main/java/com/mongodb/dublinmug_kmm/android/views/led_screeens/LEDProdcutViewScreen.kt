@@ -1,7 +1,9 @@
 package com.mongodb.dublinmug_kmm.android.views.led_screeens
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -29,36 +31,42 @@ import com.mongodb.dublinmug_kmm.android.views.SubPageButtons
 import com.mongodb.dublinmug_kmm.android.views.SubPageContentPresenter
 import com.mongodb.dublinmug_kmm.models.MainViewModel
 import com.mongodb.dublinmug_kmm.models.ProductDataModel
+import io.realm.kotlin.ext.copyFromRealm
+import io.realm.kotlin.ext.realmDictionaryOf
 
 @Composable
 fun ViewProductScreen(
     productId: String,
+    productDataModel: ProductDataModel? = null,
     onBackButtonClicked: () -> Unit,
     productModel: ProductModel
 ){
-    val product = productModel.getProduct(productId) ?: ProductDataModel().apply { _id = productId; name = productId }
+    val product = productDataModel ?: productModel.getProduct(productId)
+    if (product == null) return
+
     val openAlertDialog = remember { mutableStateOf(false) }
 
-    SubPageContentPresenter(
+    SubPageContentPresenter (
         pageName = "View Product",
         content = {
             ViewProduct(
-                product = product
+                product = product,
+                onUpdate = {println(it.name)}
             )
-            if(openAlertDialog.value) {
+            if (openAlertDialog.value) {
                 ConfirmDeleteProductDialog (
-                    {
+                    onConfirmDelete = {
                         productModel.deleteProduct(product)
                         openAlertDialog.value = false
                         onBackButtonClicked()
                     },
-                    { openAlertDialog.value = false }
+                    onCancel = { openAlertDialog.value = false }
                 )
             }
         },
         activeButtons = listOf(SubPageButtons.DELETE),
         onBackButtonPress = onBackButtonClicked,
-        onDeleteButtonClicked = {openAlertDialog.value = true}
+        onDeleteButtonClicked = { openAlertDialog.value = true }
     )
 }
 
@@ -104,7 +112,8 @@ fun ConfirmDeleteProductDialog(
 
 @Composable
 fun ViewProduct(
-    product: ProductDataModel
+    product: ProductDataModel,
+    onUpdate: (ProductDataModel) -> Unit
 ){
     Surface(
         modifier = Modifier.fillMaxWidth()
@@ -112,38 +121,58 @@ fun ViewProduct(
         val modifier = Modifier
             .padding(vertical = 5.dp)
             .fillMaxWidth()
-        var name by rememberSaveable { mutableStateOf("") }
-        var details by rememberSaveable { mutableStateOf("") }
+        var name by rememberSaveable { mutableStateOf(product.name) }
+//        var details by rememberSaveable { mutableStateOf("product.attribute") }
 
         Column (
             modifier = modifier.padding(10.dp)
         ){
-            Text(
+            Text (
                 text = "Item name:",
                 textAlign = TextAlign.Left,
                 modifier = modifier
             )
 
-            TextField(
-                value = product.name,
+            TextField (
+                value = name,
                 onValueChange = {name = it},
                 modifier = modifier
             )
 
-            Text(
+            Text (
                 text = "Item details:",
                 textAlign = TextAlign.Left,
                 modifier = modifier
             )
 
-            TextField(
-                value = product.attribute,
-                onValueChange = {details = it},
-                modifier = modifier
-            )
+            for(attribute in product.attributes){
+                Row (
+                    modifier = modifier,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    TextField (
+                        value = attribute.key,
+                        onValueChange = {},
+                        modifier = Modifier
+                            .padding(vertical = 5.dp)
+                    )
+                    TextField (
+                        value = attribute.value,
+                        onValueChange = {},
+                        modifier = Modifier
+                            .padding(vertical = 5.dp)
+                    )
+                }
+            }
 
             Button(
-                onClick = {},
+                onClick = {
+                    val productClone = product.copyFromRealm()
+                    if (product.name != name) {
+                        productClone.apply { this.name = name; /*attribute = details*/ }
+                    }
+                    onUpdate(productClone)
+                },
                 modifier = modifier
             ) {
                 Text(text = "Update")
@@ -156,19 +185,23 @@ fun ViewProduct(
 @Composable
 fun ViewDeleteDialog(){
     MaterialTheme{
-        ConfirmDeleteProductDialog(onConfirmDelete = { }) {
-        }
+        ConfirmDeleteProductDialog(onConfirmDelete = { }) {}
     }
 
 }
 @Preview(name = "Welcome light theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(name = "Welcome dark theme", uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 fun ViewProductScreenPreview() {
     MaterialTheme {
         ViewProductScreen(
             "Test Name",
-//            ProductDataModel().apply { name = "Name"; attribute = "Attribute" },
+            ProductDataModel().apply {
+                name = "Name"
+                attributes = realmDictionaryOf(
+                    Pair("Length","1m"),
+                    Pair("Color","Red")
+                )
+            },
             {},
             ProductModel(MainViewModel()))
     }

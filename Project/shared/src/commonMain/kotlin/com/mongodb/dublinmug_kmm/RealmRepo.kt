@@ -26,7 +26,7 @@ class RealmRepo {
     private val appServiceInstance by lazy {
         // If logs are on app level then it set for everything ..
         val configuration =
-            AppConfiguration.Builder("application-0-rqfuqzq").log(LogLevel.ALL).build()
+            AppConfiguration.Builder("application-0-sfkuhlf").log(LogLevel.ALL).build()
         App.create(configuration)
     }
 

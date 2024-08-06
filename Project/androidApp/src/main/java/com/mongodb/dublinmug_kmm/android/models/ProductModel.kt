@@ -7,6 +7,7 @@ import com.mongodb.dublinmug_kmm.RandomUUID
 import com.mongodb.dublinmug_kmm.RealmRepo
 import com.mongodb.dublinmug_kmm.models.MainViewModel
 import com.mongodb.dublinmug_kmm.models.ProductDataModel
+import io.realm.kotlin.ext.toRealmDictionary
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 
@@ -29,11 +30,11 @@ class ProductModel(
         repo.deleteObject(product)
     }
 
-    fun saveNewProduct(productName: String, productAttribute: String){
+    fun saveNewProduct(productName: String, productAttribute: Map<String, String>){
         val product = ProductDataModel().apply {
             _id = RandomUUID().randomId
             name = productName
-            attribute = productAttribute
+            attributes = productAttribute.toRealmDictionary()
         }
         repo.saveObject(product)
     }

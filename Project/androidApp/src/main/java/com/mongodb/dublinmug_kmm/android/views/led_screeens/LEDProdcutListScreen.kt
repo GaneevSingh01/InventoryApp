@@ -29,6 +29,7 @@ import com.mongodb.dublinmug_kmm.android.views.SubPageButtons
 import com.mongodb.dublinmug_kmm.android.views.SubPageContentPresenter
 import com.mongodb.dublinmug_kmm.models.MainViewModel
 import com.mongodb.dublinmug_kmm.models.ProductDataModel
+import io.realm.kotlin.ext.realmDictionaryOf
 
 @Composable
 fun LEDProductScreen(
@@ -138,10 +139,12 @@ fun Product(
                     text = product.name,
                     modifier = modifier,
                 )
-                Text(
-                    text = product.attribute,
-                    modifier = modifier
-                )
+                for (attribute in product.attributes){
+                    Text(
+                        text = "${attribute.key} : ${attribute.value}",
+                        modifier = modifier
+                    )
+                }
             }
         }
     }
@@ -153,7 +156,7 @@ fun ProductPreview(){
     val product = ProductDataModel()
     product.apply {
         name = "Name"
-        attribute = "Attribute"
+        attributes = realmDictionaryOf(Pair("Length","1m"))
     }
 
     MaterialTheme{
