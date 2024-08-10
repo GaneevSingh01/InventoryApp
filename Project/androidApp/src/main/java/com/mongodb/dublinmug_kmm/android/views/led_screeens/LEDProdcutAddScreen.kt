@@ -51,7 +51,7 @@ fun AddProductScreen(
 }
 
 @Composable
-fun AddProduct (
+fun AddProduct(
     addProduct: (name: String, details: Map<String, String>) -> Unit
 ){
     Surface(
@@ -63,7 +63,7 @@ fun AddProduct (
         var name by rememberSaveable { mutableStateOf("") }
         val attributes = remember { mutableStateListOf(ProductAttribute("", "")) }
 
-        Column (
+        Column(
             modifier = modifier.padding(10.dp),
         ){
             Text(
@@ -86,7 +86,7 @@ fun AddProduct (
                 onValueChange = {name = it},
                 modifier = modifier
             )
-            Row (
+            Row(
                 modifier = modifier,
                 horizontalArrangement = Arrangement.Absolute.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
