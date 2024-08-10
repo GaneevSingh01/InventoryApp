@@ -4,10 +4,10 @@ import shared
 struct ContentView: View {
 
 
-    @State var queries = [QueryInfo]()
+//    @State var queries = [QueryInfo]()
     @State var query:String = ""
 
-    var repo = RealmRepo()
+//    var repo = RealmRepo()
 
     var body: some View {
 
@@ -35,9 +35,9 @@ struct ContentView: View {
     }
 
     func save(txt: String){
-        repo.saveInfo(query: txt) { _ in
-            print("Error")
-        }
+//        repo.saveInfo(query: txt) { _ in
+//            print("Error")
+//        }
     }
 }
 
